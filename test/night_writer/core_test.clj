@@ -25,3 +25,14 @@
         (let [formatted (format-listing (read-glyph-listing))]
           (is (.contains formatted "0..00.,d"))
           (is (.contains formatted ".0.000,w")))))
+
+
+(deftest test-chars
+  (testing "get chars of string as single-letter strings"
+    (is (= ["a" "b" "c"] (chars "abc")))))
+
+(deftest test-reads-line-pattern-to-glyphs
+  (testing "can take 3-line string of braille and get the pattern"
+    (is (= ["0....."] (pattern-stream->glyphs "0.\n..\n..\n")))
+    (is (= ["0....." "0....."] (pattern-stream->glyphs "0.\n..\n..\n0.\n..\n..")))
+    #_(is (= ["0......" "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))

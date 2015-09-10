@@ -1,4 +1,9 @@
-(ns night-writer.core)
+(ns night-writer.core
+  (require [clojure.string :refer [join split]]))
+
+(defn chars [string] (map str (seq string)))
+(def transpose (partial apply map list))
+(defn lines [string] (split string #"\n"))
 
 (defn pattern->glyph [pattern]
   (apply str (map (fn [i]
@@ -9,8 +14,8 @@
 
 (defn read-glyph-listing []
   (let  [file (slurp "./braille.txt")
-         lines (clojure.string/split file #"\n")
-         pairs (map (fn [x] (clojure.string/split x #", ")) lines)]
+         lines (lines file)
+         pairs (map (fn [x] (split x #", ")) lines)]
     (into {} (map (fn [[pattern character]]
                     [character (pattern->glyph pattern)])
                   pairs))))
@@ -20,9 +25,18 @@
 (defn format-listing [l]
   (->> l
        (map reverse)
-       (map (partial clojure.string/join ","))
-       (clojure.string/join "\n" )))
+       (map (partial join ","))
+       (join "\n" )))
 
 (defn spit-listing [l]
   (spit "./mapping.txt"
         (format-listing l)))
+
+(defn pattern-stream->glyphs [stream]
+  (map (partial apply str)
+       (partition 6
+                  (chars
+                   (apply str (map #(apply str %)
+                                   (partition 3 (lines stream))))))))
+
+
