@@ -1,5 +1,6 @@
 (ns night-writer.core
-  (require [clojure.string :refer [join split]]))
+  (require [clojure.string :refer [join split]]
+           [clojure.set :refer [map-invert]]))
 
 (defn chars [string] (map str (seq string)))
 (def transpose (partial apply map list))
@@ -21,7 +22,8 @@
                     [character (pattern->glyph pattern)])
                   pairs))))
 
-(def glyph-listing (read-glyph-listing))
+(def char->glyph (read-glyph-listing))
+(def glyph->char (map-invert char->glyph))
 
 (defn format-listing [l]
   (->> l
@@ -38,7 +40,11 @@
 
 (defn staff [staves]
   "take collection of 3-line staves and turn them into 1 continuous staff"
-  (stringcat (map stringcat staves)))
+  (let [staves (map vec staves)
+        t (mapcat #(get % 0) staves)
+        m (mapcat #(get % 1) staves)
+        b (mapcat #(get % 2) staves)]
+    (map stringcat [t m b])))
 
 (defn glyphs [staff]
   (map stringcat (partition 6 (chars staff))))
@@ -46,4 +52,9 @@
 (defn pattern-stream->glyphs [stream]
   (glyphs (staff (staves stream))))
 
+(defn decode-glyphs [glyphs]
+  (map glyph->char glyphs))
+
+(defn decode-stream [stream]
+  (decode-glyphs (pattern-stream->glyphs stream)))
 

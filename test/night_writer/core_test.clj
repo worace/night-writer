@@ -1,6 +1,10 @@
 (ns night-writer.core-test
   (:require [clojure.test :refer :all]
-            [night-writer.core :refer :all]))
+            [night-writer.core :refer :all]
+            [clojure.java.io :as io]))
+
+(defn sample [name]
+  (slurp (io/file (io/resource (str "samples/" name)))))
 
 (deftest test-pattern->glyph
   (testing "converts numeric pattern into dotted glyph"
@@ -33,9 +37,12 @@
 
 (deftest test-staff
   (testing "takes multiple 3-line staves and concats them"
-    (is (= "111111222222333333" (staff [["11" "11" "11"]
-                                        ["22" "22" "22"]
-                                        ["33" "33" "33"]])))))
+    (let [s (staves "00\n11\n22\n33\n44\n55\n66\n77\n88\n")]
+      (is (= ["003366" "114477" "225588"] (staff s))))))
+
+#_(is (= "111111222222333333" (staff [["11" "11" "11"]
+                                      ["22" "22" "22"]
+                                      ["33" "33" "33"]])))
 
 (deftest test-glyphs
   (testing "turns a continuous staff into 6-char glyphs"
@@ -52,8 +59,14 @@
   (testing "can take 3-line string of braille and get the pattern"
     (is (= ["0....."] (pattern-stream->glyphs "0.\n..\n..\n")))
     (is (= ["0....." "0....."] (pattern-stream->glyphs "0.\n..\n..\n0.\n..\n..")))
-    #_(is (= ["0......" "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))
+    (is (= ["0......" "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))
 
+(deftest test-decodes-glyphs
+  (testing "takes sequence of glyphs and returns chars"
+    (is (= ["a"] (decode-glyphs ["0....."])))
+    (is (= ["a" "b"] (decode-glyphs ["0....." "00...."])))))
 
 #_(deftest test-decodes-stream
-  (testing "can take raw file stream and decode into letters"))
+  (testing "can take raw file stream and decode into letters"
+    (let [hello-world (sample "hello_world.txt")]
+      (is (= "hello world" (decode-stream hello-world))))))
