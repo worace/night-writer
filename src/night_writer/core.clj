@@ -1,6 +1,5 @@
 (ns night-writer.core)
 
-
 (defn pattern->glyph [pattern]
   (apply str (map (fn [i]
                     (if (.contains pattern (str i))
@@ -17,3 +16,13 @@
                   pairs))))
 
 (def glyph-listing (read-glyph-listing))
+
+(defn format-listing [l]
+  (->> l
+       (map reverse)
+       (map (partial clojure.string/join ","))
+       (clojure.string/join "\n" )))
+
+(defn spit-listing [l]
+  (spit "./mapping.txt"
+        (format-listing l)))

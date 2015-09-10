@@ -19,3 +19,9 @@
     (is (= "000000" ((read-glyph-listing) "=")))
     (is (= "0.0.00" ((read-glyph-listing) "z")))
     ))
+
+(deftest test-format-listing
+  (testing "readies listing for output in comma-separated format"
+        (let [formatted (format-listing (read-glyph-listing))]
+          (is (.contains formatted "0..00.,d"))
+          (is (.contains formatted ".0.000,w")))))
