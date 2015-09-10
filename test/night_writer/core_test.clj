@@ -44,8 +44,16 @@
             "333333"]
            (glyphs "111111222222333333")))))
 
+(deftest test-string-cat
+  (testing "combines strings"
+    (is (= "abcd" (stringcat ["a" "b" "cd"])))))
+
 (deftest test-reads-line-pattern-to-glyphs
   (testing "can take 3-line string of braille and get the pattern"
     (is (= ["0....."] (pattern-stream->glyphs "0.\n..\n..\n")))
     (is (= ["0....." "0....."] (pattern-stream->glyphs "0.\n..\n..\n0.\n..\n..")))
     #_(is (= ["0......" "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))
+
+
+#_(deftest test-decodes-stream
+  (testing "can take raw file stream and decode into letters"))

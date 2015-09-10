@@ -4,6 +4,7 @@
 (defn chars [string] (map str (seq string)))
 (def transpose (partial apply map list))
 (defn lines [string] (split string #"\n"))
+(def stringcat (partial reduce str))
 
 (defn pattern->glyph [pattern]
   (apply str (map (fn [i]
@@ -37,10 +38,10 @@
 
 (defn staff [staves]
   "take collection of 3-line staves and turn them into 1 continuous staff"
-  (apply str (map #(apply str %) staves)))
+  (stringcat (map stringcat staves)))
 
 (defn glyphs [staff]
-  (map #(apply str %) (partition 6 (chars staff))))
+  (map stringcat (partition 6 (chars staff))))
 
 (defn pattern-stream->glyphs [stream]
   (glyphs (staff (staves stream))))
