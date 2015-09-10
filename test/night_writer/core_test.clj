@@ -31,6 +31,19 @@
   (testing "get chars of string as single-letter strings"
     (is (= ["a" "b" "c"] (chars "abc")))))
 
+(deftest test-staff
+  (testing "takes multiple 3-line staves and concats them"
+    (is (= "111111222222333333" (staff [["11" "11" "11"]
+                                        ["22" "22" "22"]
+                                        ["33" "33" "33"]])))))
+
+(deftest test-glyphs
+  (testing "turns a continuous staff into 6-char glyphs"
+    (is (= ["111111"
+            "222222"
+            "333333"]
+           (glyphs "111111222222333333")))))
+
 (deftest test-reads-line-pattern-to-glyphs
   (testing "can take 3-line string of braille and get the pattern"
     (is (= ["0....."] (pattern-stream->glyphs "0.\n..\n..\n")))

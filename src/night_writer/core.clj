@@ -32,11 +32,17 @@
   (spit "./mapping.txt"
         (format-listing l)))
 
+(defn staves [stream]
+  (partition 3 (lines stream)))
+
+(defn staff [staves]
+  "take collection of 3-line staves and turn them into 1 continuous staff"
+  (apply str (map #(apply str %) staves)))
+
+(defn glyphs [staff]
+  (map #(apply str %) (partition 6 (chars staff))))
+
 (defn pattern-stream->glyphs [stream]
-  (map (partial apply str)
-       (partition 6
-                  (chars
-                   (apply str (map #(apply str %)
-                                   (partition 3 (lines stream))))))))
+  (glyphs (staff (staves stream))))
 
 
