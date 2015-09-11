@@ -35,5 +35,5 @@
   (map mapping/glyph->char glyphs))
 
 (defn decode-stream [stream]
-  (decode-glyphs (pattern-stream->glyphs stream)))
+  (stringcat (decode-glyphs (pattern-stream->glyphs stream))))
 
