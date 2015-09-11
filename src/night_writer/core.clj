@@ -1,4 +1,5 @@
 (ns night-writer.core
+  (:refer-clojure :exclude [chars])
   (require [clojure.string :refer [join split]]
            [clojure.set :refer [map-invert]]))
 
@@ -47,10 +48,19 @@
     (map stringcat [t m b])))
 
 (defn glyphs [staff]
-  (map stringcat (partition 6 (chars staff))))
+  "Takes 3 strings representing Top, Middle, and Bottom
+   rows of braille sequence. Parses them into 6-character glyphs"
+  (map stringcat (map #(apply map str %) (loop [g []
+                    current []
+                    staff staff]
+               (if (every? empty? staff)
+                 g
+                 (if (empty? current)
+                   (recur g (conj current (map first staff)) (map rest staff))
+                   (recur (conj g (conj current (map first staff))) [] (map rest staff))))))))
 
 (defn pattern-stream->glyphs [stream]
-  (glyphs (staff (staves stream))))
+  (staff (staves stream)))
 
 (defn decode-glyphs [glyphs]
   (map glyph->char glyphs))

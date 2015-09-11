@@ -45,11 +45,11 @@
                                       ["33" "33" "33"]])))
 
 (deftest test-glyphs
-  (testing "turns a continuous staff into 6-char glyphs"
-    (is (= ["111111"
-            "222222"
-            "333333"]
-           (glyphs "111111222222333333")))))
+  (testing "splices 3-line staff into 6-character glyphs"
+    (is (= ["001122"
+            "334455"
+            "667788"]
+           (glyphs ["003366" "114477" "225588"])))))
 
 (deftest test-string-cat
   (testing "combines strings"
