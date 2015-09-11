@@ -49,18 +49,15 @@
 
 (defn glyphs [staff]
   "Takes 3 strings representing Top, Middle, and Bottom
-   rows of braille sequence. Parses them into 6-character glyphs"
-  (map stringcat (map #(apply map str %) (loop [g []
-                    current []
-                    staff staff]
-               (if (every? empty? staff)
-                 g
-                 (if (empty? current)
-                   (recur g (conj current (map first staff)) (map rest staff))
-                   (recur (conj g (conj current (map first staff))) [] (map rest staff))))))))
+   rows of braille sequence. Parses them into 3-line glyphs of 2 marks per line"
+  (->> staff
+       (map #(partition 2 %))
+       (transpose)
+       (map flatten)
+       (map stringcat)))
 
 (defn pattern-stream->glyphs [stream]
-  (staff (staves stream)))
+  (glyphs (staff (staves stream))))
 
 (defn decode-glyphs [glyphs]
   (map glyph->char glyphs))

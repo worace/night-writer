@@ -1,4 +1,5 @@
 (ns night-writer.core-test
+  (:refer-clojure :exclude [chars])
   (:require [clojure.test :refer :all]
             [night-writer.core :refer :all]
             [clojure.java.io :as io]))
@@ -40,10 +41,6 @@
     (let [s (staves "00\n11\n22\n33\n44\n55\n66\n77\n88\n")]
       (is (= ["003366" "114477" "225588"] (staff s))))))
 
-#_(is (= "111111222222333333" (staff [["11" "11" "11"]
-                                      ["22" "22" "22"]
-                                      ["33" "33" "33"]])))
-
 (deftest test-glyphs
   (testing "splices 3-line staff into 6-character glyphs"
     (is (= ["001122"
@@ -59,9 +56,9 @@
   (testing "can take 3-line string of braille and get the pattern"
     (is (= ["0....."] (pattern-stream->glyphs "0.\n..\n..\n")))
     (is (= ["0....." "0....."] (pattern-stream->glyphs "0.\n..\n..\n0.\n..\n..")))
-    (is (= ["0......" "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))
+    (is (= ["0....." "00...."] (pattern-stream->glyphs "0.00\n....\n....")))))
 
-(deftest test-decodes-glyphs
+#_(deftest test-decodes-glyphs
   (testing "takes sequence of glyphs and returns chars"
     (is (= ["a"] (decode-glyphs ["0....."])))
     (is (= ["a" "b"] (decode-glyphs ["0....." "00...."])))))
