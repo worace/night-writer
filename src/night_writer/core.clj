@@ -9,11 +9,14 @@
 (def stringcat (partial reduce str))
 
 (defn pattern->glyph [pattern]
-  (apply str (map (fn [i]
-                    (if (.contains pattern (str i))
-                      "0"
-                      "."))
-                  (range 1 7)) ))
+  (stringcat (map stringcat
+       (transpose
+        (partition 3
+                   (map (fn [i]
+                          (if (.contains pattern (str i))
+                            "0"
+                            "."))
+                        (range 1 7) ))))))
 
 (defn read-glyph-listing []
   (let  [file (slurp "./braille.txt")
