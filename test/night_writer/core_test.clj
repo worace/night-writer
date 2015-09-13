@@ -42,3 +42,21 @@
   (testing "can take raw file stream and decode into letters"
     (let [hello-world (sample "hello_world.txt")]
       (is (= "hello world" (decode-stream hello-world))))))
+
+(deftest test-processing-modifiers
+  (testing "can identify which charset a glyph should be read from
+            based on any preceding modifiers"
+    (let [glyphs [".....0" "0....."]]
+      (is (= [{:charset :capital :glyph "0....."}]
+             (parse-modifiers glyphs))))))
+
+#_(deftest test-format-character
+  (testing "pulls character value for the glyph
+            from the appropriate character set"
+    (is (= "a" (format-character {:charset :base :glyph "0....."})))
+    (is (= "A" (format-character {:charset :capital :glyph "0....."})))))
+
+#_(deftest test-decodes-capitals
+  (testing "can decode capital letters"
+    (let [stream "..0.\n....\n.0.."]
+      (is (= "A" (decode-stream stream))))))

@@ -7,6 +7,7 @@
 (def transpose (partial apply map list))
 (defn lines [string] (split string #"\n"))
 (def stringcat (partial reduce str))
+(def modifiers {".....0" :capital})
 
 (defn staves [stream]
   (partition 3 (lines stream)))
@@ -32,8 +33,30 @@
   (glyphs (staff (staves stream))))
 
 (defn decode-glyphs [glyphs]
-  (map mapping/glyph->char glyphs))
+  (map (partial mapping/glyph->char :base) glyphs))
+
+(defn char-map [mod glyph]
+  {:charset (or mod :base) :glyph glyph})
+
+(defn parse-modifiers [glyphs]
+  (loop [mod nil
+         characters []
+         current (first glyphs)
+         glyphs (rest glyphs)]
+    (if (empty? glyphs)
+      (conj characters (char-map mod current))
+      (if-let [m (modifiers current)]
+        (recur m characters (first glyphs) (rest glyphs))
+        (recur nil
+               (conj characters (char-map mod current))
+               (first glyphs)
+               (rest glyphs))))))
+
+(defn format-character [c]
+  )
+
+(defn format-characters [chars]
+  (map format-character chars))
 
 (defn decode-stream [stream]
   (stringcat (decode-glyphs (pattern-stream->glyphs stream))))
-
