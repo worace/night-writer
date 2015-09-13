@@ -18,16 +18,29 @@
                             "."))
                         (range 1 7)))))))
 
-(defn read-glyph-listing []
-  (let  [file (slurp "./braille.txt")
+(defn read-glyph-listing [filename]
+  (let  [file (slurp filename)
          lines (lines file)
          pairs (map (fn [x] (split x #", ")) lines)]
     (into {} (map (fn [[pattern character]]
                     [character (pattern->glyph pattern)])
                   pairs))))
 
-(def char->glyph (read-glyph-listing))
-(def glyph->char (map-invert char->glyph))
+(defn read-glyph-listings [mapping]
+  (into {} (map (fn [[charset filename]]
+                  [charset (read-glyph-listing filename)])
+                mapping)))
+
+(def charsets
+  (read-glyph-listings {:base "braille.txt"
+                        :capital "capital.txt"
+                        :number "number.txt"}))
+
+(defn char->glyph [charset char]
+  ((charsets charset) char))
+
+(defn glyph->char [charset glyph]
+  ((map-invert (charsets charset)) glyph))
 
 (defn format-listing [l]
   (->> l
