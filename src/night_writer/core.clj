@@ -7,7 +7,8 @@
 (def transpose (partial apply map list))
 (defn lines [string] (split string #"\n"))
 (def stringcat (partial reduce str))
-(def modifiers {".....0" :capital})
+(def modifiers {".....0" :capital
+                ".0.000" :number})
 
 (defn staves [stream]
   (partition 3 (lines stream)))
@@ -53,10 +54,14 @@
                (rest glyphs))))))
 
 (defn format-character [c]
-  )
+  (mapping/glyph->char (:charset c) (:glyph c)))
 
 (defn format-characters [chars]
   (map format-character chars))
 
 (defn decode-stream [stream]
-  (stringcat (decode-glyphs (pattern-stream->glyphs stream))))
+  (-> stream
+      pattern-stream->glyphs
+      parse-modifiers
+      format-characters
+      stringcat))

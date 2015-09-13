@@ -50,13 +50,21 @@
       (is (= [{:charset :capital :glyph "0....."}]
              (parse-modifiers glyphs))))))
 
-#_(deftest test-format-character
+(deftest test-format-character
   (testing "pulls character value for the glyph
             from the appropriate character set"
     (is (= "a" (format-character {:charset :base :glyph "0....."})))
     (is (= "A" (format-character {:charset :capital :glyph "0....."})))))
 
-#_(deftest test-decodes-capitals
+(deftest test-decodes-simple-streams
+  (is (= "a" (decode-stream "0.\n..\n.."))))
+
+(deftest test-decodes-capitals
   (testing "can decode capital letters"
     (let [stream "..0.\n....\n.0.."]
       (is (= "A" (decode-stream stream))))))
+
+(deftest test-decodes-numbers
+  (testing "can decode numbers"
+    (let [stream ".00.\n.0..\n00.."]
+      (is (= "1" (decode-stream stream))))))
